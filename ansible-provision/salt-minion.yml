@@ -23,6 +23,7 @@
       yum:
         name: salt-minion
         state: installed
+        lock_timeout: 600
 
     - name: "Add salt master hostname to config"
       lineinfile:

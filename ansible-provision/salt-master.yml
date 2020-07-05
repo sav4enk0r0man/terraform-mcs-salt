@@ -23,6 +23,7 @@
       yum:
         name: salt-master
         state: installed
+        lock_timeout: 600
 
     - name: "Start SALT MASTER service"
       systemd:
