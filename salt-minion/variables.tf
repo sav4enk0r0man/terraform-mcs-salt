@@ -40,7 +40,7 @@ variable "fip_network" {
 
 variable "salt_minion_flavor_id" {
   description = "Host flavor id"
-  default = "908479b5-1138-46b6-b746-48bf6c24e548" # Basic-1-4-50
+  default = "7e6f3416-f74a-40b5-86e8-82d14615f329" # Basic-1-4-50
 }
 
 variable "salt_minion_image_id" {
