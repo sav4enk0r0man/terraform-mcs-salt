@@ -35,3 +35,8 @@ variable "ansible_provision_prefix" {
   description = "Ansible provision directory prefix"
   default = "ansible-provision/"
 }
+
+variable "salt_repo" {
+  description = "Salt state repository"
+  default = "https://github.com/sav4enk0r0man/terraform-mcs-salt.git"
+}

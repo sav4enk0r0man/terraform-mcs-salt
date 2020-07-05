@@ -157,7 +157,7 @@ resource "null_resource" "salt_master_exec" {
   provisioner "remote-exec" {
     inline = [
       // install packages
-      "sudo yum install epel-release vim telnet traceroute tcpdump htop jq mc -y",
+      "sudo yum install epel-release git vim telnet traceroute tcpdump htop jq mc -y",
     ]
   }
 
