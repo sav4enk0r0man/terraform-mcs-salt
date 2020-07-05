@@ -1,0 +1,5 @@
+.aws
+.terraform
+terraform.tfstate*
+TF_*
+.env
