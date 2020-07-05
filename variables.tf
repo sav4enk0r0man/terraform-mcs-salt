@@ -26,6 +26,11 @@ variable "enable" {
   default = 1
 }
 
+variable "accept_minion_keys" {
+  description = "Accept minion keys (1/0)"
+  default = 1
+}
+
 variable "ansible_provision_prefix" {
   description = "Ansible provision directory prefix"
   default = "ansible-provision/"

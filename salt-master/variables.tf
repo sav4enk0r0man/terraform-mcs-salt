@@ -78,6 +78,11 @@ variable "ansible_provision_prefix" {
   default = ""
 }
 
+variable "accept_minion_keys" {
+  description = "Accept minion keys (1/0)"
+  default = 0
+}
+
 variable "ansible_verbose" {
   description = "Ansible verbose level"
   default = "-v"

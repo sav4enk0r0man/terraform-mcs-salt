@@ -183,8 +183,7 @@ resource "null_resource" "deploy_salt_master" {
       ssh-keygen -R ${length("${openstack_networking_floatingip_v2.salt_master_fip.*.address}") > 0 ? element("${openstack_networking_floatingip_v2.salt_master_fip.*.address}", 0) : "localhost"} || echo ok
       ansible-playbook \
         ${var.ansible_verbose} -i '${element("${openstack_networking_floatingip_v2.salt_master_fip.*.address}", 0)},' \
-        --private-key ${var.ssh_dir}/${var.ssh_private_key} ${var.ansible_provision_prefix}salt-master.yml -u ${var.ssh_user} \
-        -e 'verbose=${var.ansible_verbose}'
+        --private-key ${var.ssh_dir}/${var.ssh_private_key} ${var.ansible_provision_prefix}salt-master.yml -u ${var.ssh_user}
 EOL
   }
 
@@ -212,5 +211,27 @@ EOL
 
   depends_on = [
     openstack_compute_instance_v2.salt_master_instance
+  ]
+}
+
+resource "null_resource" "accept_minion_keys" {
+  count = var.salt_master_enable * var.accept_minion_keys
+
+  triggers = {
+    trigger = "${tostring(length(null_resource.deploy_salt_minions) > 0 ? null_resource.deploy_salt_minions[0].id : null)}"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOL
+      ssh-keygen -R ${length("${openstack_networking_floatingip_v2.salt_master_fip.*.address}") > 0 ? element("${openstack_networking_floatingip_v2.salt_master_fip.*.address}", 0) : "localhost"} || echo ok
+      ansible-playbook \
+        ${var.ansible_verbose} -i '${element("${openstack_networking_floatingip_v2.salt_master_fip.*.address}", 0)},' \
+        --private-key ${var.ssh_dir}/${var.ssh_private_key} ${var.ansible_provision_prefix}salt-accept-keys.yml -u ${var.ssh_user} \
+        -e 'verbose=${var.ansible_verbose}'
+EOL
+  }
+
+  depends_on = [
+    null_resource.deploy_salt_minions
   ]
 }

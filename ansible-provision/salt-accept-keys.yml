@@ -1,0 +1,15 @@
+---
+
+- name: "Accept minion keys"
+  hosts: all
+  become: True
+  become_user: root
+  gather_facts: False
+
+  tasks:
+
+    - name: "Accept minion keys"
+      shell: |
+        salt-key -A -y
+
+...

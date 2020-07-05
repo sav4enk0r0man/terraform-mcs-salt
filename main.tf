@@ -88,5 +88,6 @@ module "salt_master" {
     "${length(module.salt_minion1.salt_minion_fip) > 0 ? element("${module.salt_minion1.salt_minion_fip}", 0) : null}",
     "${length(module.salt_minion2.salt_minion_fip) > 0 ? element("${module.salt_minion2.salt_minion_fip}", 0) : null}",
   ]
+  accept_minion_keys       = "${var.accept_minion_keys}"
   salt_master_enable       = "${var.enable}"
 }
