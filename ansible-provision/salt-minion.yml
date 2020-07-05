@@ -1,0 +1,40 @@
+---
+
+- name: "Deploy Salt minion"
+  hosts: all
+  become: True
+  become_user: root
+  gather_facts: False
+
+  tasks:
+
+    - name: "Add saltstack repository"
+      yum_repository:
+        name: saltstack-repo
+        description: EPEL YUM repo
+        enabled: yes
+        gpgcheck: yes
+        gpgkey:
+          - https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub
+          - https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7
+        baseurl: https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest
+
+    - name: "Install SALT MINION"
+      yum:
+        name: salt-minion
+        state: installed
+
+    - name: "Add salt master hostname to config"
+      lineinfile:
+        path: /etc/salt/minion
+        regexp: '^#master:'
+        backrefs: yes
+        line: "master: {{ salt_master }}"
+
+    - name: "Start SALT MINION service"
+      systemd:
+        name: salt-minion
+        enabled: yes
+        state: started
+
+...

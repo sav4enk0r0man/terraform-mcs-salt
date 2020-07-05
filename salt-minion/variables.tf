@@ -67,3 +67,8 @@ variable "salt_minion_enable" {
   description = "Enable create Salt minion host"
   default = 0
 }
+
+variable "ansible_provision_prefix" {
+  description = "Ansible provision directory prefix"
+  default = ""
+}

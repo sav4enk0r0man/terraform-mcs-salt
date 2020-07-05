@@ -157,13 +157,57 @@ resource "null_resource" "salt_master_exec" {
   provisioner "remote-exec" {
     inline = [
       // install packages
-      "sudo yum install epel-release vim telnet traceroute tcpdump htop mc -y",
+      "sudo yum install epel-release vim telnet traceroute tcpdump htop jq mc -y",
     ]
   }
 
   provisioner "remote-exec" {
     // provisioning commands
     inline = var.provision_commands
+  }
+
+  depends_on = [
+    openstack_compute_instance_v2.salt_master_instance
+  ]
+}
+
+resource "null_resource" "deploy_salt_master" {
+  count = var.salt_master_enable
+
+  triggers = {
+    trigger = "${tostring(openstack_compute_instance_v2.salt_master_instance[count.index].id)}"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOL
+      ssh-keygen -R ${length("${openstack_networking_floatingip_v2.salt_master_fip.*.address}") > 0 ? element("${openstack_networking_floatingip_v2.salt_master_fip.*.address}", 0) : "localhost"} || echo ok
+      ansible-playbook \
+        ${var.ansible_verbose} -i '${element("${openstack_networking_floatingip_v2.salt_master_fip.*.address}", 0)},' \
+        --private-key ${var.ssh_dir}/${var.ssh_private_key} ${var.ansible_provision_prefix}salt-master.yml -u ${var.ssh_user} \
+        -e 'verbose=${var.ansible_verbose}'
+EOL
+  }
+
+  depends_on = [
+    openstack_compute_instance_v2.salt_master_instance
+  ]
+}
+
+resource "null_resource" "deploy_salt_minions" {
+  count = length(null_resource.deploy_salt_master) > 0 ? length(var.salt_minion_addresess) : 0
+
+  triggers = {
+    trigger = "${tostring(length(null_resource.deploy_salt_master) > 0 ? null_resource.deploy_salt_master[0].id : null)}"
+  }
+
+  provisioner "local-exec" {
+    command = <<EOL
+      ssh-keygen -R ${var.salt_minion_addresess[count.index]} || echo ok
+      ansible-playbook \
+        ${var.ansible_verbose} -i ${var.salt_minion_addresess[count.index]}, \
+        --private-key ${var.ssh_dir}/${var.ssh_private_key} ${var.ansible_provision_prefix}salt-minion.yml -u ${var.ssh_user} \
+        -e 'salt_master=${openstack_compute_instance_v2.salt_master_instance[0].network[0].fixed_ip_v4}'
+EOL
   }
 
   depends_on = [

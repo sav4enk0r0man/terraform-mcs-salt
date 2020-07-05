@@ -58,6 +58,11 @@ variable "subnet_id" {
   default = ""
 }
 
+variable "salt_minion_addresess" {
+  description = "Salt minion addresses list"
+  default = []
+}
+
 variable "provision_commands" {
   description = "Commands run during provisioning"
   default = []
@@ -66,4 +71,14 @@ variable "provision_commands" {
 variable "salt_master_enable" {
   description = "Enable create Salt master host"
   default = 0
+}
+
+variable "ansible_provision_prefix" {
+  description = "Ansible provision directory prefix"
+  default = ""
+}
+
+variable "ansible_verbose" {
+  description = "Ansible verbose level"
+  default = "-v"
 }

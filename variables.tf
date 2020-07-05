@@ -25,3 +25,8 @@ variable "enable" {
   description = "Enable provisioning cloud infrastructure"
   default = 1
 }
+
+variable "ansible_provision_prefix" {
+  description = "Ansible provision directory prefix"
+  default = "ansible-provision/"
+}

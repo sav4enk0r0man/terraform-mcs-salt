@@ -77,11 +77,16 @@ module "salt_minion2" {
 module "salt_master" {
   source                 = "./salt-master"
 
-  hostname               = "salt-master"
-  network_id             = "${openstack_networking_network_v2.salt_network.id}"
-  subnet_id              = "${openstack_networking_subnet_v2.salt_subnet.id}"
-  salt_master_keypair    = "${var.keypair}"
-  ssh_dir                = "${var.ssh_dir}"
-  ssh_private_key        = "${var.ssh_private_key}"
-  salt_master_enable     = "${var.enable}"
+  hostname                 = "salt-master"
+  network_id               = "${openstack_networking_network_v2.salt_network.id}"
+  subnet_id                = "${openstack_networking_subnet_v2.salt_subnet.id}"
+  salt_master_keypair      = "${var.keypair}"
+  ssh_dir                  = "${var.ssh_dir}"
+  ssh_private_key          = "${var.ssh_private_key}"
+  ansible_provision_prefix = "${var.ansible_provision_prefix}"
+  salt_minion_addresess    = [
+    "${length(module.salt_minion1.salt_minion_fip) > 0 ? element("${module.salt_minion1.salt_minion_fip}", 0) : null}",
+    "${length(module.salt_minion2.salt_minion_fip) > 0 ? element("${module.salt_minion2.salt_minion_fip}", 0) : null}",
+  ]
+  salt_master_enable       = "${var.enable}"
 }
