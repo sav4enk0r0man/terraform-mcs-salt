@@ -1,3 +1,15 @@
+# Init providers
+terraform {
+  required_version = ">= 0.14"
+
+  required_providers {
+    openstack = {
+      source  = "terraform-provider-openstack/openstack"
+      version = "~> 1.35.0"
+    }
+  }
+}
+
 # Create network port for Salt master node
 resource "openstack_networking_port_v2" "salt_master_port" {
   count          = var.salt_master_enable
