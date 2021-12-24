@@ -65,7 +65,9 @@ variable "salt_minion_addresess" {
 
 variable "provision_commands" {
   description = "Commands run during provisioning"
-  default = []
+  default = [
+    "uptime" # dummy command
+  ]
 }
 
 variable "salt_master_enable" {

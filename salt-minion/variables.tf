@@ -60,7 +60,9 @@ variable "subnet_id" {
 
 variable "provision_commands" {
   description = "Commands run during provisioning"
-  default = []
+  default = [
+    "uptime" # dummy command
+  ]
 }
 
 variable "salt_minion_enable" {
